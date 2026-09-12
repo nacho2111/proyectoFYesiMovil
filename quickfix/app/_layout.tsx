@@ -5,6 +5,7 @@ import 'react-native-reanimated';
 
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { TorneosProvider } from '@/hooks/use-torneos';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme() ?? 'light';
@@ -24,20 +25,22 @@ export default function RootLayout() {
   };
 
   return (
-    <ThemeProvider value={theme}>
-      <Stack
-        screenOptions={{
-          headerTitle: '',
-          headerShadowVisible: false,
-          headerBackButtonDisplayMode: 'minimal',
-        }}>
-        <Stack.Screen name="index" options={{ title: 'QuickFix', headerShown: false }} />
-        <Stack.Screen name="crear-torneo" options={{ title: 'Crear torneo' }} />
-        <Stack.Screen name="participantes" options={{ title: 'Participantes' }} />
-        <Stack.Screen name="cuadro" options={{ title: 'Cuadro' }} />
-        <Stack.Screen name="resultado" options={{ title: 'Resultado', presentation: 'modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <TorneosProvider>
+      <ThemeProvider value={theme}>
+        <Stack
+          screenOptions={{
+            headerTitle: '',
+            headerShadowVisible: false,
+            headerBackButtonDisplayMode: 'minimal',
+          }}>
+          <Stack.Screen name="index" options={{ title: 'QuickFix', headerShown: false }} />
+          <Stack.Screen name="crear-torneo" options={{ title: 'Crear torneo' }} />
+          <Stack.Screen name="participantes" options={{ title: 'Participantes' }} />
+          <Stack.Screen name="cuadro" options={{ title: 'Cuadro' }} />
+          <Stack.Screen name="resultado" options={{ title: 'Resultado', presentation: 'modal' }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </TorneosProvider>
   );
 }
