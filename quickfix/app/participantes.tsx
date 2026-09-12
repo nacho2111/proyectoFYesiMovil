@@ -4,14 +4,13 @@ import { StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
-export default function HomeScreen() {
+export default function ParticipantesScreen() {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">QuickFix</ThemedText>
-      <ThemedText>Armá el fixture de tu torneo en minutos.</ThemedText>
+      <ThemedText>Lista de jugadores y tamaño del cuadro.</ThemedText>
 
-      <Link href="/crear-torneo" style={styles.link}>
-        <ThemedText type="link">Crear torneo</ThemedText>
+      <Link href="/cuadro" style={styles.link}>
+        <ThemedText type="link">Generar cuadro</ThemedText>
       </Link>
     </ThemedView>
   );
@@ -22,7 +21,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
     padding: 24,
   },
   link: {

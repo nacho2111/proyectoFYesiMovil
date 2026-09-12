@@ -12,6 +12,10 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ title: 'QuickFix' }} />
+        <Stack.Screen name="crear-torneo" options={{ title: 'Crear torneo' }} />
+        <Stack.Screen name="participantes" options={{ title: 'Participantes' }} />
+        <Stack.Screen name="cuadro" options={{ title: 'Cuadro' }} />
+        <Stack.Screen name="resultado" options={{ title: 'Resultado', presentation: 'modal' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
