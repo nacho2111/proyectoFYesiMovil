@@ -21,6 +21,7 @@ app/          pantallas (expo-router, routing por archivos)
 components/   componentes que se reusan
 constants/    colores y tipografía
 hooks/        hooks propios
+utils/        lógica que no depende de pantallas (armado del fixture)
 ```
 
 ## Estado
