@@ -1,21 +1,24 @@
 import { Link } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
+import { Button } from '@/components/button';
 import { ThemedView } from '@/components/themed-view';
+import { Title } from '@/components/title';
 
 export default function CuadroScreen() {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText>Rondas y cruces del torneo.</ThemedText>
+      <Title subtitle="Rondas y cruces del torneo.">Cuadro</Title>
 
-      <Link href="/resultado" style={styles.link}>
-        <ThemedText type="link">Cargar resultado</ThemedText>
-      </Link>
+      <View style={styles.buttons}>
+        <Link href="/resultado" asChild>
+          <Button title="Cargar resultado" />
+        </Link>
 
-      <Link href="/" dismissTo style={styles.link}>
-        <ThemedText type="link">Volver al inicio</ThemedText>
-      </Link>
+        <Link href="/" dismissTo asChild>
+          <Button title="Volver al inicio" variant="secondary" />
+        </Link>
+      </View>
     </ThemedView>
   );
 }
@@ -23,12 +26,10 @@ export default function CuadroScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: 24,
+    gap: 24,
   },
-  link: {
-    marginTop: 16,
-    paddingVertical: 12,
+  buttons: {
+    gap: 12,
   },
 });
