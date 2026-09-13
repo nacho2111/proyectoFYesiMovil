@@ -41,3 +41,9 @@ export function useTorneos() {
 
   return context;
 }
+
+export function useTorneo(id: string | undefined) {
+  const { torneos } = useTorneos();
+
+  return torneos.find((torneo) => torneo.id === id);
+}

@@ -1,14 +1,20 @@
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 import { Button } from '@/components/button';
 import { ThemedView } from '@/components/themed-view';
 import { Title } from '@/components/title';
+import { useTorneo } from '@/hooks/use-torneos';
 
 export default function ParticipantesScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const torneo = useTorneo(id);
+
   return (
     <ThemedView style={styles.container}>
-      <Title subtitle="Lista de jugadores y tamaño del cuadro.">Participantes</Title>
+      <Title subtitle={torneo?.nombre ?? 'Lista de jugadores y tamaño del cuadro.'}>
+        Participantes
+      </Title>
 
       <Link href="/cuadro" asChild>
         <Button title="Generar cuadro" />
