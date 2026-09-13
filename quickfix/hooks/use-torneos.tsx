@@ -20,6 +20,7 @@ export type Torneo = {
 type TorneosContextValue = {
   torneos: Torneo[];
   setTorneos: Dispatch<SetStateAction<Torneo[]>>;
+  actualizarTorneo: (id: string, cambios: Partial<Torneo>) => void;
 };
 
 const TorneosContext = createContext<TorneosContextValue | null>(null);
@@ -27,8 +28,16 @@ const TorneosContext = createContext<TorneosContextValue | null>(null);
 export function TorneosProvider({ children }: { children: ReactNode }) {
   const [torneos, setTorneos] = useState<Torneo[]>([]);
 
+  function actualizarTorneo(id: string, cambios: Partial<Torneo>) {
+    setTorneos((anteriores) =>
+      anteriores.map((torneo) => (torneo.id === id ? { ...torneo, ...cambios } : torneo))
+    );
+  }
+
   return (
-    <TorneosContext.Provider value={{ torneos, setTorneos }}>{children}</TorneosContext.Provider>
+    <TorneosContext.Provider value={{ torneos, setTorneos, actualizarTorneo }}>
+      {children}
+    </TorneosContext.Provider>
   );
 }
 
