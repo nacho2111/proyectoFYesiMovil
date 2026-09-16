@@ -7,6 +7,7 @@ import { Input } from '@/components/input';
 import { ThemedView } from '@/components/themed-view';
 import { Title } from '@/components/title';
 import { useTorneos, type Torneo } from '@/hooks/use-torneos';
+import { TAMANIOS_CUADRO } from '@/utils/fixture';
 
 export default function CrearTorneoScreen() {
   const router = useRouter();
@@ -22,7 +23,8 @@ export default function CrearTorneoScreen() {
       id: Date.now().toString(),
       nombre: nombre.trim(),
       participantes: [],
-      lugares: 8,
+      // arranca en el más chico y se agranda a medida que se cargan participantes
+      lugares: TAMANIOS_CUADRO[0],
       rondas: [],
     };
 

@@ -6,11 +6,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
 import { ParticipanteItem } from '@/components/participante-item';
+import { TamanioCuadro } from '@/components/tamanio-cuadro';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Title } from '@/components/title';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useTorneo, useTorneos } from '@/hooks/use-torneos';
+import { tamanioMinimo } from '@/utils/fixture';
 
 export default function ParticipantesScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -36,9 +38,18 @@ export default function ParticipantesScreen() {
 
   const participantes = torneo.participantes;
   const cantidad = participantes.length;
+  const lugares = torneo.lugares;
 
+  // si con el nuevo no entran, el cuadro se agranda solo; achicarlo lo decide el usuario
   function guardar(lista: string[]) {
-    actualizarTorneo(id, { participantes: lista });
+    actualizarTorneo(id, {
+      participantes: lista,
+      lugares: lista.length > lugares ? tamanioMinimo(lista.length) : lugares,
+    });
+  }
+
+  function cambiarLugares(tamanio: number) {
+    actualizarTorneo(id, { lugares: tamanio });
   }
 
   function agregar() {
@@ -77,6 +88,8 @@ export default function ParticipantesScreen() {
 
           <Button title="Agregar" onPress={agregar} disabled={!nombre.trim()} />
         </View>
+
+        <TamanioCuadro lugares={lugares} cantidad={cantidad} onCambiar={cambiarLugares} />
 
         <View style={styles.lista}>
           <ThemedText type="defaultSemiBold">

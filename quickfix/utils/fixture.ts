@@ -16,6 +16,16 @@ type Lugar = {
   libre: boolean;
 };
 
+export const TAMANIOS_CUADRO = [4, 8, 16, 32];
+
+// el cuadro más chico de los que se pueden elegir donde entran todos
+export function tamanioMinimo(cantidad: number): number {
+  return (
+    TAMANIOS_CUADRO.find((tamanio) => tamanio >= cantidad) ??
+    TAMANIOS_CUADRO[TAMANIOS_CUADRO.length - 1]
+  );
+}
+
 const NOMBRES_RONDAS = [
   'Final',
   'Semifinal',
