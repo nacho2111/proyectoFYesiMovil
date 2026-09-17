@@ -8,14 +8,24 @@ import { ThemedView } from '@/components/themed-view';
 import { Title } from '@/components/title';
 import { useTorneos, type Torneo } from '@/hooks/use-torneos';
 import { TAMANIOS_CUADRO } from '@/utils/fixture';
+import { validarNombreTorneo } from '@/utils/validaciones';
 
 export default function CrearTorneoScreen() {
   const router = useRouter();
   const { setTorneos } = useTorneos();
   const [nombre, setNombre] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  function cambiarNombre(texto: string) {
+    setNombre(texto);
+    setError(null);
+  }
 
   function crear() {
-    if (!nombre.trim()) {
+    const problema = validarNombreTorneo(nombre);
+
+    if (problema) {
+      setError(problema);
       return;
     }
 
@@ -40,13 +50,14 @@ export default function CrearTorneoScreen() {
         label="Nombre del torneo"
         placeholder="Ej: Torneo de verano"
         value={nombre}
-        onChangeText={setNombre}
+        onChangeText={cambiarNombre}
         onSubmitEditing={crear}
         returnKeyType="done"
+        error={error ?? undefined}
         autoFocus
       />
 
-      <Button title="Crear" onPress={crear} disabled={!nombre.trim()} />
+      <Button title="Crear" onPress={crear} />
     </ThemedView>
   );
 }

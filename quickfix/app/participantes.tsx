@@ -1,4 +1,4 @@
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,15 +12,20 @@ import { ThemedView } from '@/components/themed-view';
 import { Title } from '@/components/title';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useTorneo, useTorneos } from '@/hooks/use-torneos';
-import { tamanioMinimo } from '@/utils/fixture';
+import { generarFixture, tamanioMinimo } from '@/utils/fixture';
+import { validarNuevoParticipante, validarParticipantes } from '@/utils/validaciones';
 
 export default function ParticipantesScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
   const torneo = useTorneo(id);
   const { actualizarTorneo } = useTorneos();
   const insets = useSafeAreaInsets();
   const mutedColor = useThemeColor({}, 'textMuted');
+  const dangerColor = useThemeColor({}, 'danger');
   const [nombre, setNombre] = useState('');
+  const [errorNombre, setErrorNombre] = useState<string | null>(null);
+  const [errorCuadro, setErrorCuadro] = useState<string | null>(null);
 
   if (!torneo) {
     return (
@@ -46,10 +51,17 @@ export default function ParticipantesScreen() {
       participantes: lista,
       lugares: lista.length > lugares ? tamanioMinimo(lista.length) : lugares,
     });
+    setErrorCuadro(null);
   }
 
   function cambiarLugares(tamanio: number) {
     actualizarTorneo(id, { lugares: tamanio });
+    setErrorCuadro(null);
+  }
+
+  function cambiarNombre(texto: string) {
+    setNombre(texto);
+    setErrorNombre(null);
   }
 
   function agregar() {
@@ -57,8 +69,28 @@ export default function ParticipantesScreen() {
       return;
     }
 
+    const problema = validarNuevoParticipante(nombre, participantes);
+
+    if (problema) {
+      setErrorNombre(problema);
+      return;
+    }
+
     guardar([...participantes, nombre.trim()]);
     setNombre('');
+  }
+
+  function generar() {
+    const problema = validarParticipantes(participantes, lugares);
+
+    if (problema) {
+      setErrorCuadro(problema);
+      return;
+    }
+
+    actualizarTorneo(id, { rondas: generarFixture(participantes, lugares) });
+    // replace para que volver desde el cuadro no deje tocar los participantes ya sorteados
+    router.replace({ pathname: '/cuadro', params: { id } });
   }
 
   function editar(indice: number, nuevoNombre: string) {
@@ -85,9 +117,10 @@ export default function ParticipantesScreen() {
             <Input
               placeholder="Nombre del participante"
               value={nombre}
-              onChangeText={setNombre}
+              onChangeText={cambiarNombre}
               onSubmitEditing={agregar}
               submitBehavior="submit"
+              error={errorNombre ?? undefined}
               autoFocus
             />
           </View>
@@ -128,9 +161,13 @@ export default function ParticipantesScreen() {
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: 16 + insets.bottom }]}>
-        <Link href="/cuadro" asChild>
-          <Button title="Generar cuadro" />
-        </Link>
+        {errorCuadro ? (
+          <ThemedText type="small" style={{ color: dangerColor }}>
+            {errorCuadro}
+          </ThemedText>
+        ) : null}
+
+        <Button title="Generar cuadro" onPress={generar} />
       </View>
     </ThemedView>
   );
@@ -147,6 +184,8 @@ const styles = StyleSheet.create({
   },
   agregar: {
     flexDirection: 'row',
+    // flex-start para que el botón no se estire cuando aparece el error abajo del input
+    alignItems: 'flex-start',
     gap: 8,
   },
   campo: {
@@ -158,5 +197,6 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: 24,
     paddingTop: 16,
+    gap: 8,
   },
 });
