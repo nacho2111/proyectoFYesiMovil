@@ -69,6 +69,12 @@ export default function ParticipantesScreen() {
     guardar(participantes.filter((_, i) => i !== indice));
   }
 
+  function mover(indice: number, destino: number) {
+    const lista = [...participantes];
+    [lista[indice], lista[destino]] = [lista[destino], lista[indice]];
+    guardar(lista);
+  }
+
   return (
     <ThemedView style={styles.container}>
       <ScrollView contentContainerStyle={styles.contenido} keyboardShouldPersistTaps="handled">
@@ -96,6 +102,13 @@ export default function ParticipantesScreen() {
             {cantidad} {cantidad === 1 ? 'cargado' : 'cargados'}
           </ThemedText>
 
+          {cantidad >= 2 ? (
+            <ThemedText type="small" style={{ color: mutedColor }}>
+              Los cruces salen de este orden: el 1 contra el 2, el 3 contra el 4, y así. Si sobran
+              lugares, los últimos de la lista pasan directo.
+            </ThemedText>
+          ) : null}
+
           {cantidad === 0 ? (
             <ThemedText style={{ color: mutedColor }}>Todavía no cargaste a nadie.</ThemedText>
           ) : (
@@ -106,6 +119,8 @@ export default function ParticipantesScreen() {
                 nombre={participante}
                 onEditar={(nuevoNombre) => editar(indice, nuevoNombre)}
                 onBorrar={() => borrar(indice)}
+                onSubir={indice > 0 ? () => mover(indice, indice - 1) : undefined}
+                onBajar={indice < cantidad - 1 ? () => mover(indice, indice + 1) : undefined}
               />
             ))
           )}

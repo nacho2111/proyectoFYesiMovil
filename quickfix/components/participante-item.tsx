@@ -11,9 +11,19 @@ type ParticipanteItemProps = {
   nombre: string;
   onEditar: (nombre: string) => void;
   onBorrar: () => void;
+  // sin callback el botón queda deshabilitado (el primero no sube, el último no baja)
+  onSubir?: () => void;
+  onBajar?: () => void;
 };
 
-export function ParticipanteItem({ numero, nombre, onEditar, onBorrar }: ParticipanteItemProps) {
+export function ParticipanteItem({
+  numero,
+  nombre,
+  onEditar,
+  onBorrar,
+  onSubir,
+  onBajar,
+}: ParticipanteItemProps) {
   const colors = Colors[useColorScheme() ?? 'light'];
   const [editando, setEditando] = useState(false);
   const [texto, setTexto] = useState(nombre);
@@ -33,6 +43,26 @@ export function ParticipanteItem({ numero, nombre, onEditar, onBorrar }: Partici
 
   return (
     <View style={[styles.item, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+      <View style={styles.mover}>
+        <Pressable
+          onPress={onSubir}
+          disabled={!onSubir || editando}
+          hitSlop={{ left: 8, right: 8, top: 4 }}
+          style={(!onSubir || editando) && styles.deshabilitado}
+          accessibilityLabel="Subir participante">
+          <Ionicons name="chevron-up" size={20} color={colors.textMuted} />
+        </Pressable>
+
+        <Pressable
+          onPress={onBajar}
+          disabled={!onBajar || editando}
+          hitSlop={{ left: 8, right: 8, bottom: 4 }}
+          style={(!onBajar || editando) && styles.deshabilitado}
+          accessibilityLabel="Bajar participante">
+          <Ionicons name="chevron-down" size={20} color={colors.textMuted} />
+        </Pressable>
+      </View>
+
       <ThemedText style={[styles.numero, { color: colors.textMuted }]}>{numero}</ThemedText>
 
       {editando ? (
@@ -81,6 +111,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderWidth: 1,
     borderRadius: 12,
+  },
+  mover: {
+    justifyContent: 'center',
+  },
+  deshabilitado: {
+    opacity: 0.3,
   },
   numero: {
     minWidth: 24,
