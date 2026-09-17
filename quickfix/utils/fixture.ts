@@ -26,6 +26,11 @@ export function tamanioMinimo(cantidad: number): number {
   );
 }
 
+// se puede cargar resultado cuando ya están los dos rivales y no es un pase directo
+export function esJugable(partido: Partido): boolean {
+  return !partido.libre && partido.jugador1 !== null && partido.jugador2 !== null;
+}
+
 const NOMBRES_RONDAS = [
   'Final',
   'Semifinal',
