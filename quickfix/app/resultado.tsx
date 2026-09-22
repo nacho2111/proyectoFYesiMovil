@@ -10,7 +10,7 @@ import { Title } from '@/components/title';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useTorneo, useTorneos } from '@/hooks/use-torneos';
-import { cargarResultado, esJugable } from '@/utils/fixture';
+import { cargarResultado, esJugable, obtenerCampeon } from '@/utils/fixture';
 
 export default function ResultadoScreen() {
   const { id, ronda, partido } = useLocalSearchParams<{
@@ -35,6 +35,17 @@ export default function ResultadoScreen() {
     return (
       <ThemedView style={styles.container}>
         <Title subtitle="Puede que el cuadro haya cambiado.">No encontramos el partido</Title>
+        <Button title="Volver" onPress={() => router.back()} variant="secondary" />
+      </ThemedView>
+    );
+  }
+
+  const campeon = obtenerCampeon(torneo.rondas);
+
+  if (campeon) {
+    return (
+      <ThemedView style={styles.container}>
+        <Title subtitle={`Campeón: ${campeon}`}>El torneo ya terminó</Title>
         <Button title="Volver" onPress={() => router.back()} variant="secondary" />
       </ThemedView>
     );

@@ -1,3 +1,4 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,7 +10,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Title } from '@/components/title';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useTorneo } from '@/hooks/use-torneos';
-import { esJugable } from '@/utils/fixture';
+import { esJugable, obtenerCampeon } from '@/utils/fixture';
 
 const ESPACIO_ENTRE_PARTIDOS = 16;
 
@@ -19,6 +20,8 @@ export default function CuadroScreen() {
   const torneo = useTorneo(id);
   const insets = useSafeAreaInsets();
   const mutedColor = useThemeColor({}, 'textMuted');
+  const primaryColor = useThemeColor({}, 'primary');
+  const onPrimaryColor = useThemeColor({}, 'onPrimary');
 
   if (!torneo) {
     return (
@@ -52,6 +55,7 @@ export default function CuadroScreen() {
   // Todas las columnas miden lo mismo y reparten los partidos con space-around:
   // así cada partido queda a la altura del medio de los dos que lo alimentan.
   const altoColumna = torneo.rondas[0].partidos.length * (ALTO_PARTIDO + ESPACIO_ENTRE_PARTIDOS);
+  const campeon = obtenerCampeon(torneo.rondas);
 
   function abrirPartido(ronda: number, partido: number) {
     router.push({ pathname: '/resultado', params: { id, ronda, partido } });
@@ -62,10 +66,20 @@ export default function CuadroScreen() {
       <ScrollView contentContainerStyle={[styles.contenido, { paddingBottom: 24 + insets.bottom }]}>
         <View style={styles.encabezado}>
           <Title subtitle={torneo.nombre}>Cuadro</Title>
-          <ThemedText type="small" style={{ color: mutedColor }}>
-            Tocá un partido para cargar el resultado. Deslizá para el costado para ver las rondas
-            que siguen.
-          </ThemedText>
+
+          {campeon ? (
+            <View style={[styles.banner, { backgroundColor: primaryColor }]}>
+              <Ionicons name="trophy" size={20} color={onPrimaryColor} />
+              <ThemedText type="defaultSemiBold" style={{ color: onPrimaryColor }}>
+                Campeón: {campeon} · Torneo terminado
+              </ThemedText>
+            </View>
+          ) : (
+            <ThemedText type="small" style={{ color: mutedColor }}>
+              Tocá un partido para cargar el resultado. Deslizá para el costado para ver las
+              rondas que siguen.
+            </ThemedText>
+          )}
         </View>
 
         <ScrollView horizontal contentContainerStyle={styles.rondas}>
@@ -81,7 +95,7 @@ export default function CuadroScreen() {
                     key={indicePartido}
                     partido={partido}
                     onPress={
-                      esJugable(partido)
+                      !campeon && esJugable(partido)
                         ? () => abrirPartido(indiceRonda, indicePartido)
                         : undefined
                     }
@@ -112,6 +126,13 @@ const styles = StyleSheet.create({
   encabezado: {
     paddingHorizontal: 24,
     gap: 8,
+  },
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 12,
+    borderRadius: 12,
   },
   rondas: {
     paddingHorizontal: 24,

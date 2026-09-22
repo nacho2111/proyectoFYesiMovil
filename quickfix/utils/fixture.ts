@@ -26,6 +26,11 @@ export function tamanioMinimo(cantidad: number): number {
   );
 }
 
+// el campeón es el ganador del único partido de la última ronda, si ya se jugó
+export function obtenerCampeon(rondas: Ronda[]): string | null {
+  return rondas.at(-1)?.partidos[0]?.ganador ?? null;
+}
+
 // se puede cargar resultado cuando ya están los dos rivales y no es un pase directo
 export function esJugable(partido: Partido): boolean {
   return !partido.libre && partido.jugador1 !== null && partido.jugador2 !== null;

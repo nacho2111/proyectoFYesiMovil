@@ -5,6 +5,7 @@ import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { Torneo } from '@/hooks/use-torneos';
+import { obtenerCampeon } from '@/utils/fixture';
 
 type TorneoCardProps = {
   torneo: Torneo;
@@ -13,7 +14,7 @@ type TorneoCardProps = {
 export function TorneoCard({ torneo }: TorneoCardProps) {
   const router = useRouter();
   const colors = Colors[useColorScheme() ?? 'light'];
-  const campeon = torneo.rondas.at(-1)?.partidos[0].ganador;
+  const campeon = obtenerCampeon(torneo.rondas);
   const cantidad = torneo.participantes.length;
 
   function abrir() {
