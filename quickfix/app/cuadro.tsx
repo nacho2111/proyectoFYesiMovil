@@ -1,15 +1,16 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
-import { ALTO_PARTIDO, ANCHO_PARTIDO, PartidoCard } from '@/components/partido-card';
+import { ALTO_PARTIDO, PartidoCard } from '@/components/partido-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Title } from '@/components/title';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useTorneo } from '@/hooks/use-torneos';
+import { styles } from '@/styles/cuadro.styles';
 import { esJugable, obtenerCampeon } from '@/utils/fixture';
 
 const ESPACIO_ENTRE_PARTIDOS = 16;
@@ -109,43 +110,3 @@ export default function CuadroScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  aviso: {
-    flex: 1,
-    padding: 24,
-    gap: 24,
-  },
-  contenido: {
-    paddingTop: 24,
-    gap: 24,
-  },
-  encabezado: {
-    paddingHorizontal: 24,
-    gap: 8,
-  },
-  banner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    padding: 12,
-    borderRadius: 12,
-  },
-  rondas: {
-    paddingHorizontal: 24,
-    gap: 24,
-  },
-  ronda: {
-    width: ANCHO_PARTIDO,
-    gap: 8,
-  },
-  nombreRonda: {
-    height: 24,
-  },
-  partidos: {
-    justifyContent: 'space-around',
-  },
-});

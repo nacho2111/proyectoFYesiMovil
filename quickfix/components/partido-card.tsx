@@ -1,14 +1,13 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
+import { ALTO_PARTIDO, ANCHO_PARTIDO, styles } from '@/components/partido-card.styles';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { Partido } from '@/utils/fixture';
 
-// alto fijo: el cuadro lo usa para alinear cada partido con los dos que lo alimentan
-export const ANCHO_PARTIDO = 200;
-export const ALTO_PARTIDO = 96;
+export { ALTO_PARTIDO, ANCHO_PARTIDO };
 
 type PartidoCardProps = {
   partido: Partido;
@@ -96,43 +95,3 @@ function Fila({ jugador, libre, ganador }: FilaProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    width: ANCHO_PARTIDO,
-    height: ALTO_PARTIDO,
-    borderWidth: 1,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  fila: {
-    height: 36,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 12,
-  },
-  nombre: {
-    flex: 1,
-  },
-  sinJugador: {
-    fontStyle: 'italic',
-  },
-  divisor: {
-    height: 1,
-  },
-  pie: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 12,
-  },
-  pasaDirecto: {
-    opacity: 0.6,
-  },
-  vacio: {
-    opacity: 0.35,
-  },
-  pressed: {
-    opacity: 0.8,
-  },
-});

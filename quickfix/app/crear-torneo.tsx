@@ -1,12 +1,12 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
 
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
 import { ThemedView } from '@/components/themed-view';
 import { Title } from '@/components/title';
 import { useTorneos, type Torneo } from '@/hooks/use-torneos';
+import { styles } from '@/styles/crear-torneo.styles';
 import { TAMANIOS_CUADRO } from '@/utils/fixture';
 import { validarNombreTorneo } from '@/utils/validaciones';
 
@@ -61,11 +61,3 @@ export default function CrearTorneoScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    gap: 24,
-  },
-});

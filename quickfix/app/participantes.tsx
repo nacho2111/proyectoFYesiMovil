@@ -1,6 +1,6 @@
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
@@ -12,6 +12,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Title } from '@/components/title';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useTorneo, useTorneos } from '@/hooks/use-torneos';
+import { styles } from '@/styles/participantes.styles';
 import { generarFixture, tamanioMinimo } from '@/utils/fixture';
 import { validarNuevoParticipante, validarParticipantes } from '@/utils/validaciones';
 
@@ -172,31 +173,3 @@ export default function ParticipantesScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contenido: {
-    flexGrow: 1,
-    padding: 24,
-    gap: 24,
-  },
-  agregar: {
-    flexDirection: 'row',
-    // flex-start para que el botón no se estire cuando aparece el error abajo del input
-    alignItems: 'flex-start',
-    gap: 8,
-  },
-  campo: {
-    flex: 1,
-  },
-  lista: {
-    gap: 8,
-  },
-  footer: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    gap: 8,
-  },
-});

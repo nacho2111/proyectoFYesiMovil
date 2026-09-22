@@ -1,6 +1,7 @@
-import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
+import { styles } from '@/components/title.styles';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 type TitleProps = {
@@ -19,9 +20,3 @@ export function Title({ children, subtitle, style }: TitleProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    gap: 4,
-  },
-});

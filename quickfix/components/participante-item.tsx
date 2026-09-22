@@ -1,9 +1,10 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 
+import { styles } from '@/components/participante-item.styles';
 import { ThemedText } from '@/components/themed-text';
-import { Colors, FontSizes } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 type ParticipanteItemProps = {
@@ -101,39 +102,3 @@ export function ParticipanteItem({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    minHeight: 56,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderRadius: 12,
-  },
-  mover: {
-    justifyContent: 'center',
-  },
-  deshabilitado: {
-    opacity: 0.3,
-  },
-  numero: {
-    minWidth: 24,
-    textAlign: 'center',
-  },
-  nombre: {
-    flex: 1,
-  },
-  input: {
-    flex: 1,
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    borderWidth: 1,
-    borderRadius: 8,
-    fontSize: FontSizes.body,
-  },
-  accion: {
-    padding: 6,
-  },
-});

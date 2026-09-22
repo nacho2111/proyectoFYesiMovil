@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
+import { styles } from '@/components/torneo-card.styles';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { Torneo } from '@/hooks/use-torneos';
@@ -51,24 +52,3 @@ export function TorneoCard({ torneo }: TorneoCardProps) {
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderRadius: 12,
-  },
-  info: {
-    flex: 1,
-    gap: 2,
-  },
-  estado: {
-    fontWeight: '600',
-  },
-  pressed: {
-    opacity: 0.8,
-  },
-});

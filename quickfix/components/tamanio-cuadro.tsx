@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
+import { styles } from '@/components/tamanio-cuadro.styles';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -60,27 +61,3 @@ export function TamanioCuadro({ lugares, cantidad, onCambiar }: TamanioCuadroPro
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    gap: 8,
-  },
-  opciones: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  opcion: {
-    flex: 1,
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderRadius: 12,
-  },
-  pressed: {
-    opacity: 0.8,
-  },
-  disabled: {
-    opacity: 0.4,
-  },
-});
