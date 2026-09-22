@@ -30,7 +30,7 @@ export default function ParticipantesScreen() {
   if (!torneo) {
     return (
       <ThemedView style={styles.contenido}>
-        <Title subtitle="Puede que se haya borrado al cerrar la app.">
+        <Title subtitle="Puede que ya no exista.">
           No encontramos el torneo
         </Title>
 

@@ -26,7 +26,7 @@ export default function CuadroScreen() {
   if (!torneo) {
     return (
       <ThemedView style={styles.aviso}>
-        <Title subtitle="Puede que se haya borrado al cerrar la app.">
+        <Title subtitle="Puede que ya no exista.">
           No encontramos el torneo
         </Title>
 

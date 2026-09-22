@@ -19,7 +19,7 @@ const fotos = [
 ];
 
 export default function HomeScreen() {
-  const { torneos } = useTorneos();
+  const { torneos, cargando } = useTorneos();
   const mutedColor = useThemeColor({}, 'textMuted');
 
   return (
@@ -68,12 +68,15 @@ export default function HomeScreen() {
           </>
         }
         ListEmptyComponent={
-          <View style={styles.vacio}>
-            <ThemedText type="defaultSemiBold">Todavía no tenés torneos</ThemedText>
-            <ThemedText style={[styles.vacioTexto, { color: mutedColor }]}>
-              Cuando crees uno, lo vas a ver acá.
-            </ThemedText>
-          </View>
+          // mientras carga lo guardado, no mostrar el vacío: todavía no sabemos si hay torneos
+          cargando ? null : (
+            <View style={styles.vacio}>
+              <ThemedText type="defaultSemiBold">Todavía no tenés torneos</ThemedText>
+              <ThemedText style={[styles.vacioTexto, { color: mutedColor }]}>
+                Cuando crees uno, lo vas a ver acá.
+              </ThemedText>
+            </View>
+          )
         }
       />
     </ThemedView>
