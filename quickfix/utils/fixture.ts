@@ -31,6 +31,81 @@ export function esJugable(partido: Partido): boolean {
   return !partido.libre && partido.jugador1 !== null && partido.jugador2 !== null;
 }
 
+// Carga el resultado de un partido y hace avanzar al ganador a la ronda siguiente.
+// Si se corrige un partido que ya se había jugado y cambia el ganador, el resultado
+// de los partidos posteriores donde jugaba el ganador anterior deja de valer.
+export function cargarResultado(
+  rondas: Ronda[],
+  indiceRonda: number,
+  indicePartido: number,
+  ganador: string,
+  resultado: string
+): Ronda[] {
+  const copia = rondas.map((ronda) => ({
+    ...ronda,
+    partidos: ronda.partidos.map((partido) => ({ ...partido })),
+  }));
+
+  const partido = copia[indiceRonda].partidos[indicePartido];
+
+  if (!esJugable(partido)) {
+    throw new Error('Ese partido todavía no se puede jugar');
+  }
+  if (ganador !== partido.jugador1 && ganador !== partido.jugador2) {
+    throw new Error('El ganador tiene que ser uno de los dos jugadores del partido');
+  }
+
+  partido.ganador = ganador;
+  partido.resultado = resultado;
+
+  propagarGanador(copia, indiceRonda, indicePartido, ganador);
+
+  return copia;
+}
+
+// Pone a `jugador` (o lo saca, con null) en el lugar que le corresponde en la ronda
+// siguiente. Si eso pisa un partido que ya tenía un resultado cargado, ese resultado
+// deja de valer y la limpieza sigue en cascada hacia las rondas que vienen después.
+function propagarGanador(
+  rondas: Ronda[],
+  indiceRonda: number,
+  indicePartido: number,
+  jugador: string | null
+) {
+  const rondaSiguiente = rondas[indiceRonda + 1];
+
+  if (!rondaSiguiente) {
+    return;
+  }
+
+  const slot = Math.floor(indicePartido / 2);
+  const lado: 'jugador1' | 'jugador2' = indicePartido % 2 === 0 ? 'jugador1' : 'jugador2';
+  const partidoSiguiente = rondaSiguiente.partidos[slot];
+
+  if (partidoSiguiente[lado] === jugador) {
+    return; // no cambió nada, no hay nada que limpiar más adelante
+  }
+
+  const teniaResultado = partidoSiguiente.ganador !== null;
+  partidoSiguiente[lado] = jugador;
+
+  if (partidoSiguiente.libre) {
+    // pase directo: gana quien haya quedado en el único lugar ocupado, o nadie si quedó vacío
+    const nuevoGanador = partidoSiguiente.jugador1 ?? partidoSiguiente.jugador2;
+    partidoSiguiente.ganador = nuevoGanador;
+    partidoSiguiente.resultado = null;
+    propagarGanador(rondas, indiceRonda + 1, slot, nuevoGanador);
+    return;
+  }
+
+  partidoSiguiente.ganador = null;
+  partidoSiguiente.resultado = null;
+
+  if (teniaResultado) {
+    propagarGanador(rondas, indiceRonda + 1, slot, null);
+  }
+}
+
 const NOMBRES_RONDAS = [
   'Final',
   'Semifinal',
