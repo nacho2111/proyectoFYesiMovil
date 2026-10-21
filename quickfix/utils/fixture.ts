@@ -1,9 +1,22 @@
+// cómo terminó un partido: lo ganó uno, empataron, o uno no se presentó (walkover)
+export type Desenlace = 'ganador' | 'empate' | 'walkover';
+
 export type Partido = {
   jugador1: string | null;
   jugador2: string | null;
+  // en un empate de liga no hay ganador; en eliminación es el que pasa (por penales, desempate...)
   ganador: string | null;
   resultado: string | null;
   libre: boolean;
+  // null mientras no se jugó (los torneos guardados antes no lo tienen)
+  desenlace?: Desenlace | null;
+};
+
+// lo que se carga desde la pantalla de resultado
+export type Carga = {
+  desenlace: Desenlace;
+  ganador: string | null;
+  resultado: string;
 };
 
 export type Ronda = {
@@ -43,8 +56,7 @@ export function cargarResultado(
   rondas: Ronda[],
   indiceRonda: number,
   indicePartido: number,
-  ganador: string,
-  resultado: string
+  { desenlace, ganador, resultado }: Carga
 ): Ronda[] {
   const copia = rondas.map((ronda) => ({
     ...ronda,
@@ -56,12 +68,14 @@ export function cargarResultado(
   if (!esJugable(partido)) {
     throw new Error('Ese partido todavía no se puede jugar');
   }
-  if (ganador !== partido.jugador1 && ganador !== partido.jugador2) {
+  // en eliminación siempre pasa alguien, aunque hayan empatado
+  if (ganador === null || (ganador !== partido.jugador1 && ganador !== partido.jugador2)) {
     throw new Error('El ganador tiene que ser uno de los dos jugadores del partido');
   }
 
   partido.ganador = ganador;
   partido.resultado = resultado;
+  partido.desenlace = desenlace;
 
   propagarGanador(copia, indiceRonda, indicePartido, ganador);
 
@@ -105,6 +119,7 @@ function propagarGanador(
 
   partidoSiguiente.ganador = null;
   partidoSiguiente.resultado = null;
+  partidoSiguiente.desenlace = null;
 
   if (teniaResultado) {
     propagarGanador(rondas, indiceRonda + 1, slot, null);
@@ -161,7 +176,7 @@ export function generarFixture(participantes: string[], lugares: number): Ronda[
   return rondas;
 }
 
-function ubicarParticipantes(participantes: string[], lugares: number): Lugar[] {
+export function ubicarParticipantes(participantes: string[], lugares: number): Lugar[] {
   // el cuadro más chico en el que entran todos
   let tamanio = 2;
   while (tamanio < participantes.length) {
@@ -199,5 +214,20 @@ function armarPartido(lugar1: Lugar, lugar2: Lugar): Partido {
     ganador: libre ? (lugar1.jugador ?? lugar2.jugador) : null,
     resultado: null,
     libre,
+    desenlace: null,
   };
+}
+
+// ya tiene resultado cargado (los guardados antes de que existiera el desenlace
+// se reconocen porque tienen ganador)
+export function estaJugado(partido: Partido): boolean {
+  return !partido.libre && (partido.desenlace != null || partido.ganador !== null);
+}
+
+export function desenlaceDe(partido: Partido): Desenlace | null {
+  if (!estaJugado(partido)) {
+    return null;
+  }
+
+  return partido.desenlace ?? 'ganador';
 }

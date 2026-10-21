@@ -1,22 +1,44 @@
 import { StyleSheet } from 'react-native';
 
+import { Fuentes } from '@/constants/theme';
+
 export const styles = StyleSheet.create({
-  card: {
+  fila: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderRadius: 12,
+    gap: 14,
+    minHeight: 68,
+    paddingVertical: 10,
   },
-  info: {
+  textos: {
     flex: 1,
     gap: 2,
   },
+  nombre: {
+    fontFamily: Fuentes.textoNegrita,
+    fontSize: 18,
+    lineHeight: 22,
+    letterSpacing: -0.4,
+  },
+  detalle: {
+    fontFamily: Fuentes.texto,
+    fontSize: 13,
+    lineHeight: 18,
+  },
   estado: {
-    fontWeight: '600',
+    alignItems: 'flex-end',
+    gap: 2,
+  },
+  estadoTexto: {
+    fontFamily: Fuentes.textoMedio,
+    fontSize: 13,
+  },
+  conteo: {
+    fontFamily: Fuentes.cifras,
+    fontSize: 22,
+    fontVariant: ['tabular-nums'],
   },
   pressed: {
-    opacity: 0.8,
+    opacity: 0.7,
   },
 });

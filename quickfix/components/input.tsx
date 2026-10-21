@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { TextInput, View, type TextInputProps } from 'react-native';
 
 import { styles } from '@/components/input.styles';
@@ -10,22 +11,38 @@ type InputProps = TextInputProps & {
   error?: string;
 };
 
-export function Input({ label, error, style, ...rest }: InputProps) {
+export function Input({ label, error, style, onFocus, onBlur, ...rest }: InputProps) {
   const colors = Colors[useColorScheme() ?? 'light'];
+  const [enfocado, setEnfocado] = useState(false);
+
+  let borde = colors.border;
+  if (error) {
+    borde = colors.danger;
+  } else if (enfocado) {
+    borde = colors.primary;
+  }
 
   return (
     <View style={styles.container}>
-      {label ? <ThemedText type="defaultSemiBold">{label}</ThemedText> : null}
+      {label ? (
+        <ThemedText style={[styles.label, { color: colors.text }]}>{label}</ThemedText>
+      ) : null}
 
       <TextInput
         placeholderTextColor={colors.textMuted}
+        selectionColor={colors.primary}
+        cursorColor={colors.primary}
+        onFocus={(evento) => {
+          setEnfocado(true);
+          onFocus?.(evento);
+        }}
+        onBlur={(evento) => {
+          setEnfocado(false);
+          onBlur?.(evento);
+        }}
         style={[
           styles.input,
-          {
-            color: colors.text,
-            backgroundColor: colors.surface,
-            borderColor: error ? colors.danger : colors.border,
-          },
+          { color: colors.text, backgroundColor: colors.background, borderColor: borde },
           style,
         ]}
         {...rest}

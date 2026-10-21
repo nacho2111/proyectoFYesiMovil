@@ -1,4 +1,5 @@
 import { TAMANIOS_CUADRO } from '@/utils/fixture';
+import type { Formato } from '@/utils/formatos';
 
 // Cada regla devuelve el mensaje para mostrar en pantalla, o null si está todo bien.
 
@@ -7,6 +8,33 @@ export const MAXIMO_PARTICIPANTES = TAMANIOS_CUADRO[TAMANIOS_CUADRO.length - 1];
 export function validarNombreTorneo(nombre: string): string | null {
   if (!nombre.trim()) {
     return 'Ponele un nombre al torneo.';
+  }
+
+  return null;
+}
+
+export function validarDeporteOtro(texto: string): string | null {
+  if (!texto.trim()) {
+    return 'Contanos de qué es el torneo.';
+  }
+
+  return null;
+}
+
+// para renombrar a alguien ya cargado: que no quede vacío ni igual a otro
+export function validarRenombre(
+  nuevo: string,
+  indice: number,
+  participantes: string[]
+): string | null {
+  if (!nuevo.trim()) {
+    return 'El nombre no puede quedar vacío.';
+  }
+
+  const buscado = normalizar(nuevo);
+
+  if (participantes.some((participante, i) => i !== indice && normalizar(participante) === buscado)) {
+    return 'Ya hay alguien con ese nombre.';
   }
 
   return null;
@@ -46,6 +74,43 @@ export function validarParticipantes(participantes: string[], lugares: number): 
   }
 
   return null;
+}
+
+type DatosFormato = {
+  formato: Formato;
+  participantes: string[];
+  lugares: number;
+  cantidadGrupos: number;
+};
+
+// además de lo de siempre, cada formato pide lo suyo
+export function validarFixture({
+  formato,
+  participantes,
+  lugares,
+  cantidadGrupos,
+}: DatosFormato): string | null {
+  const cantidad = participantes.length;
+
+  if (formato === 'liga' || formato === 'grupos') {
+    // en liga y grupos no hay cuadro, así que el tamaño no importa
+    const problema = validarParticipantes(participantes, MAXIMO_PARTICIPANTES);
+
+    if (problema) {
+      return problema;
+    }
+    if (formato === 'grupos' && cantidad < cantidadGrupos * 2) {
+      return `Para ${cantidadGrupos} grupos hacen falta al menos ${cantidadGrupos * 2} participantes (2 por grupo).`;
+    }
+
+    return null;
+  }
+
+  if (formato === 'doble' && cantidad === 2) {
+    return 'Para doble eliminación cargá al menos 3 participantes.';
+  }
+
+  return validarParticipantes(participantes, lugares);
 }
 
 // "Ana  María " y "ana maría" cuentan como el mismo nombre

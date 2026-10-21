@@ -6,7 +6,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'small';
+  type?: 'default' | 'title' | 'hero' | 'defaultSemiBold' | 'subtitle' | 'numero' | 'link' | 'small';
 };
 
 export function ThemedText({
@@ -21,19 +21,5 @@ export function ThemedText({
     type === 'link' ? 'primary' : 'text'
   );
 
-  return (
-    <Text
-      style={[
-        { color },
-        type === 'default' ? styles.default : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
-        type === 'small' ? styles.small : undefined,
-        style,
-      ]}
-      {...rest}
-    />
-  );
+  return <Text style={[{ color }, styles[type], style]} {...rest} />;
 }

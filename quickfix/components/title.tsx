@@ -15,8 +15,14 @@ export function Title({ children, subtitle, style }: TitleProps) {
 
   return (
     <View style={[styles.container, style]}>
-      <ThemedText type="title">{children}</ThemedText>
-      {subtitle ? <ThemedText style={{ color: mutedColor }}>{subtitle}</ThemedText> : null}
+      <ThemedText type="title" accessibilityRole="header">
+        {children}
+      </ThemedText>
+      {subtitle ? (
+        <ThemedText type="small" style={{ color: mutedColor }}>
+          {subtitle}
+        </ThemedText>
+      ) : null}
     </View>
   );
 }

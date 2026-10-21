@@ -1,23 +1,25 @@
 import { StyleSheet } from 'react-native';
 
-import { FontSizes } from '@/constants/theme';
+import { FILETE, FontSizes, Fuentes } from '@/constants/theme';
 
+// rectángulos de tinta, sin redondeo
 export const styles = StyleSheet.create({
   button: {
     minHeight: 52,
     paddingHorizontal: 20,
-    borderRadius: 12,
+    borderWidth: FILETE,
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
+    fontFamily: Fuentes.textoNegrita,
     fontSize: FontSizes.body,
-    fontWeight: '600',
   },
+  // al apretarlo se corre un poco, como un sello
   pressed: {
-    opacity: 0.8,
+    transform: [{ translateX: 2 }, { translateY: 2 }],
   },
   disabled: {
-    opacity: 0.5,
+    opacity: 0.35,
   },
 });

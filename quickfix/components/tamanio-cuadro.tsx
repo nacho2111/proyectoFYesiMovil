@@ -1,5 +1,6 @@
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
+import { OpcionesNumero } from '@/components/selectores';
 import { styles } from '@/components/tamanio-cuadro.styles';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
@@ -18,38 +19,14 @@ export function TamanioCuadro({ lugares, cantidad, onCambiar }: TamanioCuadroPro
 
   return (
     <View style={styles.container}>
-      <ThemedText type="defaultSemiBold">Tamaño del cuadro</ThemedText>
-
-      <View style={styles.opciones}>
-        {TAMANIOS_CUADRO.map((tamanio) => {
-          const elegido = tamanio === lugares;
-          const noEntran = cantidad > tamanio;
-
-          return (
-            <Pressable
-              key={tamanio}
-              onPress={() => onCambiar(tamanio)}
-              disabled={noEntran}
-              accessibilityRole="button"
-              accessibilityLabel={`Cuadro de ${tamanio}`}
-              accessibilityState={{ selected: elegido, disabled: noEntran }}
-              style={({ pressed }) => [
-                styles.opcion,
-                elegido
-                  ? { backgroundColor: colors.primary, borderColor: colors.primary }
-                  : { backgroundColor: colors.surface, borderColor: colors.border },
-                pressed && styles.pressed,
-                noEntran && styles.disabled,
-              ]}>
-              <ThemedText
-                type="defaultSemiBold"
-                style={{ color: elegido ? colors.onPrimary : colors.text }}>
-                {tamanio}
-              </ThemedText>
-            </Pressable>
-          );
-        })}
-      </View>
+      <OpcionesNumero
+        titulo="Tamaño del cuadro"
+        opciones={TAMANIOS_CUADRO}
+        valor={lugares}
+        onCambiar={onCambiar}
+        deshabilitada={(tamanio) => cantidad > tamanio}
+        etiqueta={(tamanio) => `Cuadro de ${tamanio}`}
+      />
 
       {cantidad > 0 && sobran > 0 ? (
         <ThemedText type="small" style={{ color: colors.textMuted }}>

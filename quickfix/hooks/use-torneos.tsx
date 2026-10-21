@@ -10,15 +10,57 @@ import {
   type SetStateAction,
 } from 'react';
 
+import { obtenerDeporte, type DeporteId, type Puntos } from '@/utils/deportes';
+import type { PartidoDoble } from '@/utils/doble';
 import type { Ronda } from '@/utils/fixture';
+import type { Formato } from '@/utils/formatos';
+import type { Grupo } from '@/utils/grupos';
+import type { Fecha } from '@/utils/liga';
 
 export type Torneo = {
   id: string;
   nombre: string;
+  deporte: DeporteId;
+  // qué es, cuando el deporte es "otro"
+  deporteOtro: string;
+  formato: Formato;
+  puntos: Puntos;
   participantes: string[];
   lugares: number;
+  // eliminación directa, y el cuadro final en grupos + eliminación
   rondas: Ronda[];
+  // liga
+  fechas: Fecha[];
+  // grupos + eliminación
+  grupos: Grupo[];
+  cantidadGrupos: number;
+  clasifican: number;
+  clasificados: string[];
+  // doble eliminación
+  doble: PartidoDoble[];
 };
+
+// los torneos guardados antes de que hubiera deportes y formatos eran todos de eliminación
+function completar(guardado: Partial<Torneo> & Pick<Torneo, 'id' | 'nombre'>): Torneo {
+  const deporte = guardado.deporte ?? 'otro';
+
+  return {
+    deporteOtro: '',
+    formato: 'eliminacion',
+    puntos: obtenerDeporte(deporte).puntos,
+    participantes: [],
+    lugares: 4,
+    rondas: [],
+    fechas: [],
+    grupos: [],
+    cantidadGrupos: 2,
+    clasifican: 2,
+    clasificados: [],
+    doble: [],
+    ...guardado,
+    deporte,
+  };
+}
 
 const CLAVE_STORAGE = 'quickfix:torneos';
 
@@ -27,6 +69,7 @@ type TorneosContextValue = {
   cargando: boolean;
   setTorneos: Dispatch<SetStateAction<Torneo[]>>;
   actualizarTorneo: (id: string, cambios: Partial<Torneo>) => void;
+  borrarTorneo: (id: string) => void;
 };
 
 const TorneosContext = createContext<TorneosContextValue | null>(null);
@@ -42,7 +85,7 @@ export function TorneosProvider({ children }: { children: ReactNode }) {
     AsyncStorage.getItem(CLAVE_STORAGE)
       .then((guardado) => {
         if (guardado) {
-          setTorneos(JSON.parse(guardado));
+          setTorneos(JSON.parse(guardado).map(completar));
         }
       })
       .catch(() => {
@@ -68,8 +111,13 @@ export function TorneosProvider({ children }: { children: ReactNode }) {
     );
   }
 
+  function borrarTorneo(id: string) {
+    setTorneos((anteriores) => anteriores.filter((torneo) => torneo.id !== id));
+  }
+
   return (
-    <TorneosContext.Provider value={{ torneos, cargando, setTorneos, actualizarTorneo }}>
+    <TorneosContext.Provider
+      value={{ torneos, cargando, setTorneos, actualizarTorneo, borrarTorneo }}>
       {children}
     </TorneosContext.Provider>
   );

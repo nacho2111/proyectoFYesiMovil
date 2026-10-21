@@ -1,12 +1,18 @@
 import { StyleSheet } from 'react-native';
 
+import { ANCHO_MAXIMO } from '@/constants/theme';
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   contenido: {
     flexGrow: 1,
-    padding: 24,
+    width: '100%',
+    maxWidth: ANCHO_MAXIMO,
+    alignSelf: 'center',
+    padding: 16,
+    paddingTop: 18,
     gap: 24,
   },
   agregar: {
@@ -22,8 +28,11 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
   footer: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
+    width: '100%',
+    maxWidth: ANCHO_MAXIMO,
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 12,
     gap: 8,
   },
 });

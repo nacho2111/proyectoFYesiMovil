@@ -1,10 +1,12 @@
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
+import { ConfigGrupos } from '@/components/config-grupos';
 import { Input } from '@/components/input';
+import { Panel } from '@/components/panel';
 import { ParticipanteItem } from '@/components/participante-item';
 import { TamanioCuadro } from '@/components/tamanio-cuadro';
 import { ThemedText } from '@/components/themed-text';
@@ -13,8 +15,21 @@ import { Title } from '@/components/title';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useTorneo, useTorneos } from '@/hooks/use-torneos';
 import { styles } from '@/styles/participantes.styles';
-import { generarFixture, tamanioMinimo } from '@/utils/fixture';
-import { validarNuevoParticipante, validarParticipantes } from '@/utils/validaciones';
+import { nombreDeporte, obtenerDeporte } from '@/utils/deportes';
+import { tamanioMinimo } from '@/utils/fixture';
+import { nombreFormato, usaCuadro } from '@/utils/formatos';
+import { generarFixtureTorneo } from '@/utils/torneo';
+import { validarFixture, validarNuevoParticipante, validarRenombre } from '@/utils/validaciones';
+
+const AYUDAS = {
+  eliminacion:
+    'Los cruces salen de este orden: el 1 contra el 2, el 3 contra el 4, y así. Si sobran lugares, los últimos de la lista pasan directo.',
+  doble:
+    'Los cruces salen de este orden: el 1 contra el 2, el 3 contra el 4, y así. Si sobran lugares, los últimos de la lista pasan directo.',
+  liga: 'Todos juegan contra todos una vez. El orden solo cambia qué partidos van en cada fecha.',
+  grupos:
+    'Se reparten en orden: el 1 al grupo A, el 2 al B, y vuelve a empezar. Poné primero a los mejores para que queden en grupos distintos.',
+};
 
 export default function ParticipantesScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -45,6 +60,7 @@ export default function ParticipantesScreen() {
   const participantes = torneo.participantes;
   const cantidad = participantes.length;
   const lugares = torneo.lugares;
+  const deporte = obtenerDeporte(torneo.deporte);
 
   // si con el nuevo no entran, el cuadro se agranda solo; achicarlo lo decide el usuario
   function guardar(lista: string[]) {
@@ -82,14 +98,14 @@ export default function ParticipantesScreen() {
   }
 
   function generar() {
-    const problema = validarParticipantes(participantes, lugares);
+    const problema = validarFixture(torneo!);
 
     if (problema) {
       setErrorCuadro(problema);
       return;
     }
 
-    actualizarTorneo(id, { rondas: generarFixture(participantes, lugares) });
+    actualizarTorneo(id, generarFixtureTorneo(torneo!));
     // replace para que volver desde el cuadro no deje tocar los participantes ya sorteados
     router.replace({ pathname: '/cuadro', params: { id } });
   }
@@ -110,66 +126,92 @@ export default function ParticipantesScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.contenido} keyboardShouldPersistTaps="handled">
-        <Title subtitle={torneo.nombre}>Participantes</Title>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView keyboardShouldPersistTaps="handled">
+          <View style={styles.contenido}>
+          <Title
+            subtitle={`${torneo.nombre} · ${nombreDeporte(torneo.deporte, torneo.deporteOtro)} · ${nombreFormato(torneo.formato)}`}>
+            {`Cargá ${deporte.participantes}`}
+          </Title>
 
-        <View style={styles.agregar}>
-          <View style={styles.campo}>
-            <Input
-              placeholder="Nombre del participante"
-              value={nombre}
-              onChangeText={cambiarNombre}
-              onSubmitEditing={agregar}
-              submitBehavior="submit"
-              error={errorNombre ?? undefined}
-              autoFocus
-            />
+          <View style={styles.agregar}>
+            <View style={styles.campo}>
+              <Input
+                placeholder={deporte.campoNombre}
+                accessibilityLabel={deporte.campoNombre}
+                value={nombre}
+                onChangeText={cambiarNombre}
+                onSubmitEditing={agregar}
+                submitBehavior="submit"
+                error={errorNombre ?? undefined}
+                autoFocus
+              />
+            </View>
+
+            <Button title="Agregar" onPress={agregar} disabled={!nombre.trim()} />
           </View>
 
-          <Button title="Agregar" onPress={agregar} disabled={!nombre.trim()} />
-        </View>
+          {usaCuadro(torneo.formato) ? (
+            <TamanioCuadro lugares={lugares} cantidad={cantidad} onCambiar={cambiarLugares} />
+          ) : null}
 
-        <TamanioCuadro lugares={lugares} cantidad={cantidad} onCambiar={cambiarLugares} />
+          {torneo.formato === 'grupos' ? (
+            <ConfigGrupos
+              cantidadGrupos={torneo.cantidadGrupos}
+              clasifican={torneo.clasifican}
+              cantidad={cantidad}
+              onCambiar={(cambios) => {
+                actualizarTorneo(id, cambios);
+                setErrorCuadro(null);
+              }}
+            />
+          ) : null}
 
-        <View style={styles.lista}>
-          <ThemedText type="defaultSemiBold">
-            {cantidad} {cantidad === 1 ? 'cargado' : 'cargados'}
-          </ThemedText>
+          <View style={styles.lista}>
+            <ThemedText type="subtitle">
+              {cantidad} {cantidad === 1 ? 'cargado' : 'cargados'}
+            </ThemedText>
 
-          {cantidad >= 2 ? (
-            <ThemedText type="small" style={{ color: mutedColor }}>
-              Los cruces salen de este orden: el 1 contra el 2, el 3 contra el 4, y así. Si sobran
-              lugares, los últimos de la lista pasan directo.
+            {cantidad >= 2 ? (
+              <ThemedText type="small" style={{ color: mutedColor }}>
+                {AYUDAS[torneo.formato]}
+              </ThemedText>
+            ) : null}
+
+            {cantidad === 0 ? (
+              <ThemedText style={{ color: mutedColor }}>Todavía no cargaste a nadie.</ThemedText>
+            ) : (
+              <Panel>
+                {participantes.map((participante, indice) => (
+                  <ParticipanteItem
+                    key={`${indice}-${participante}`}
+                    numero={indice + 1}
+                    nombre={participante}
+                    onEditar={(nuevoNombre) => editar(indice, nuevoNombre)}
+                    validar={(nuevoNombre) => validarRenombre(nuevoNombre, indice, participantes)}
+                    onBorrar={() => borrar(indice)}
+                    onSubir={indice > 0 ? () => mover(indice, indice - 1) : undefined}
+                    onBajar={indice < cantidad - 1 ? () => mover(indice, indice + 1) : undefined}
+                  />
+                ))}
+              </Panel>
+            )}
+          </View>
+          </View>
+        </ScrollView>
+
+        <View style={[styles.footer, { paddingBottom: 16 + insets.bottom }]}>
+          {errorCuadro ? (
+            <ThemedText type="small" style={{ color: dangerColor }}>
+              {errorCuadro}
             </ThemedText>
           ) : null}
 
-          {cantidad === 0 ? (
-            <ThemedText style={{ color: mutedColor }}>Todavía no cargaste a nadie.</ThemedText>
-          ) : (
-            participantes.map((participante, indice) => (
-              <ParticipanteItem
-                key={`${indice}-${participante}`}
-                numero={indice + 1}
-                nombre={participante}
-                onEditar={(nuevoNombre) => editar(indice, nuevoNombre)}
-                onBorrar={() => borrar(indice)}
-                onSubir={indice > 0 ? () => mover(indice, indice - 1) : undefined}
-                onBajar={indice < cantidad - 1 ? () => mover(indice, indice + 1) : undefined}
-              />
-            ))
-          )}
+          <Button title="Generar fixture" onPress={generar} />
         </View>
-      </ScrollView>
-
-      <View style={[styles.footer, { paddingBottom: 16 + insets.bottom }]}>
-        {errorCuadro ? (
-          <ThemedText type="small" style={{ color: dangerColor }}>
-            {errorCuadro}
-          </ThemedText>
-        ) : null}
-
-        <Button title="Generar cuadro" onPress={generar} />
-      </View>
+      </KeyboardAvoidingView>
     </ThemedView>
   );
 }

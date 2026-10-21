@@ -1,66 +1,64 @@
 import { StyleSheet } from 'react-native';
 
-import { FontSizes } from '@/constants/theme';
+import { ANCHO_MAXIMO, Fuentes, Pixel } from '@/constants/theme';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  lista: {
-    paddingBottom: 24,
+  contenido: {
+    width: '100%',
+    maxWidth: ANCHO_MAXIMO,
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+    gap: 20,
   },
-  banner: {
-    height: 320,
+  portada: {
+    gap: 10,
   },
-  fotos: {
-    flex: 1,
-    flexDirection: 'row',
-    gap: 3,
+  // el nombre en el paso más grande del muestrario
+  marca: {
+    fontFamily: Fuentes.pixel,
+    fontSize: Pixel.enorme,
+    lineHeight: 76,
   },
-  foto: {
-    flex: 1,
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    padding: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
-  },
-  bannerTitle: {
-    color: '#FFFFFF',
-    fontSize: FontSizes.hero,
-    lineHeight: 48,
-  },
-  bannerText: {
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 16,
-    gap: 32,
+  bajada: {
+    fontFamily: Fuentes.textoMedio,
+    fontSize: 17,
+    lineHeight: 24,
+    maxWidth: 380,
   },
   crear: {
-    minHeight: 60,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 28,
   },
-  item: {
-    paddingHorizontal: 24,
-    paddingBottom: 12,
+  seccion: {
+    gap: 12,
+    marginTop: 8,
   },
-  vacio: {
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 24,
-    paddingVertical: 32,
+  deportes: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
   },
-  vacioTexto: {
-    textAlign: 'center',
+  deporte: {
+    minHeight: 44,
+    paddingHorizontal: 14,
+    justifyContent: 'center',
+    borderWidth: 2,
+  },
+  deporteNombre: {
+    fontFamily: Fuentes.textoNegrita,
+    fontSize: 15,
+  },
+  listaTitulo: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 10,
+  },
+  cantidad: {
+    fontFamily: Fuentes.pixel,
+    fontSize: Pixel.chico,
+    lineHeight: 30,
   },
 });
